@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/signal"
 	"path/filepath"
+	"regexp"
 	"syscall"
 
 	"github.com/fgrosse/prox"
@@ -103,7 +104,10 @@ func processes(env prox.Environment, procFileFlag string) ([]prox.Process, error
 		// user has specified a path
 		logger.Debug("Reading processes from file specified via --procfile", zap.String("path", procFileFlag))
 		f, err = os.Open(procFileFlag)
-		if filepath.Base(procFileFlag) == "Procfile" {
+		basename = filepath.Base(procFileFlag)
+		matched, _ := regexp.MatchString("(?i)procfile", basename)
+
+		if matched {
 			parse = prox.ParseProcFile
 		}
 	} else {
